@@ -22,6 +22,8 @@ platform provisions everything.
 Serves product data during flash sales. Read-heavy — handles
 thousands of concurrent browse requests during traffic spikes.
 
+```
+
 | Endpoint         | Method | Purpose                                   |
 | ---------------- | ------ | ----------------------------------------- |
 | `/health`        | GET    | Health check for load balancer            |
@@ -30,6 +32,8 @@ thousands of concurrent browse requests during traffic spikes.
 | `/products/{id}` | GET    | Single product with flash sale pricing    |
 | `/flash-sale`    | GET    | Active flash sale products with discounts |
 | `/metrics`       | GET    | Request count and throughput              |
+
+```
 
 **Flash sale pricing** — products marked `flash_sale: true`
 automatically return a `sale_price` calculated from the
@@ -42,6 +46,7 @@ Processes customer orders during flash sales. Write-heavy —
 each request creates an order record with validation and
 discount application.
 
+```
 | Endpoint       | Method | Purpose                                               |
 | -------------- | ------ | ----------------------------------------------------- |
 | `/health`      | GET    | Health check for load balancer                        |
@@ -51,6 +56,7 @@ discount application.
 | `/orders/{id}` | GET    | Retrieve specific order                               |
 | `/config`      | GET    | Validate IRSA — retrieves secret from Secrets Manager |
 | `/metrics`     | GET    | Request count, order count, throughput                |
+```
 
 **Flash sale discount** — orders with `flash_sale: true`
 receive an additional 15% discount on the total. The orders
@@ -67,11 +73,13 @@ exchanges it for temporary credentials automatically.
 
 ## Architecture
 
+```
 Customer → ALB → EKS
 ├── stratum-catalogue (2 replicas)
 │ └── /products, /flash-sale
 └── stratum-orders (2 replicas)
 └── /orders → Secrets Manager (IRSA)
+```
 
 Both services run in the `stratum-workloads` namespace on
 EKS. Each has its own Kubernetes service account annotated
@@ -83,6 +91,7 @@ VPC-native pod IPs.
 
 ## Repository Structure
 
+```
 stratum-workloads/
 ├── services/
 │ ├── catalogue/
@@ -106,6 +115,7 @@ stratum-workloads/
 ├── docs/
 │ └── ADR-001-phase4-retrospective.md
 └── .gitignore
+```
 
 ---
 
