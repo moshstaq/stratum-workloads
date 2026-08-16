@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stratum-orders
+  namespace: stratum-workloads
+  labels:
+    app: stratum-orders
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: stratum-orders
+  template:
+    metadata:
+      labels:
+        app: stratum-orders
+    spec:
+      serviceAccountName: stratum-orders
+      containers:
+        - name: orders
+          image: 688365520256.dkr.ecr.us-east-1.amazonaws.com/stratum-platform:orders-v1.0.0
+          ports:
+            - containerPort: 8001
+          env:
+            - name: AWS_REGION
+              value: "us-east-1"
+            - name: SECRET_NAME
+              value: "stratum/platform/app-config"
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "250m"
+              memory: "256Mi"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8001
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8001
+            initialDelaySeconds: 5
+            periodSeconds: 10

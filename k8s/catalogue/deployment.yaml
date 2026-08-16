@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stratum-catalogue
+  namespace: stratum-workloads
+  labels:
+    app: stratum-catalogue
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: stratum-catalogue
+  template:
+    metadata:
+      labels:
+        app: stratum-catalogue
+    spec:
+      serviceAccountName: stratum-catalogue
+      containers:
+        - name: catalogue
+          image: 688365520256.dkr.ecr.us-east-1.amazonaws.com/stratum-platform:catalogue-v1.0.0
+          ports:
+            - containerPort: 8000
+          env:
+            - name: AWS_REGION
+              value: "us-east-1"
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "250m"
+              memory: "256Mi"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
