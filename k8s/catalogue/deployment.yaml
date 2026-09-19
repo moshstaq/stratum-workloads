@@ -14,11 +14,15 @@ spec:
     metadata:
       labels:
         app: stratum-catalogue
+      annotations:
+        instrumentation.opentelemetry.io/inject-java: "false"
+        instrumentation.opentelemetry.io/inject-nodejs: "false"
+        instrumentation.opentelemetry.io/inject-dotnet: "false"
     spec:
       serviceAccountName: stratum-catalogue
       containers:
         - name: catalogue
-          image: 688365520256.dkr.ecr.us-east-1.amazonaws.com/stratum-platform:catalogue-v1.0.0
+          image: 688365520256.dkr.ecr.us-east-1.amazonaws.com/stratum-platform:catalogue-v1.0.1
           ports:
             - containerPort: 8000
           env:
